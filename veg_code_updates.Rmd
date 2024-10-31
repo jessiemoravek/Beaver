@@ -4,6 +4,59 @@ output: html_document
 date: "2024-10-17"
 ---
 ```{r}
+library(tidyverse)
+library(dplyr)
+
+veg23 <- read.csv('LC23_EVT_240_ProjectClip_csv.csv')
+veg20 <- read.csv('LC20_EVT_220_ProjectClip_csv.csv')
+
+veg20 <- rbind(veg20,NA)
+
+nrow(veg23) == nrow(veg20)
 
 ```
+
+```{r}
+
+combined_df <- bind_cols(veg23, veg20$EVT_NAME_20)
+
+combined_df <- combined_df %>% rename(EVT_NAME_20 = ...22)
+
+```
+
+```{r}
+# Identify rows in col1 that have matches in col2
+matches_in_col1 <- combined_df$EVT_NAME %in% combined_df$EVT_NAME_20
+
+# Identify rows in col2 that have matches in col1
+matches_in_col2 <- combined_df$EVT_NAME_20 %in% combined_df$EVT_NAME
+
+# View the rows with matches
+combined_df[matches_in_col1, ]
+combined_df[matches_in_col2, ]
+
+
+# Check if any values in col1 are in col2
+any(combined_df$EVT_NAME %in% combined_df$EVT_NAME_20)
+# Output: TRUE or FALSE
+
+
+# Find matching values between col1 and col2
+matches <- intersect(combined_df$EVT_NAME, combined_df$EVT_NAME_20)
+
+print(matches)
+```
+#Lots of stuff matches, print non matches
+```{r}
+# Identify rows in col1 that are not in col2
+non_matches_in_col1 <- combined_df$EVT_NAME[!combined_df$EVT_NAME %in% combined_df$EVT_NAME_20]
+
+# Identify rows in col2 that are not in col1
+non_matches_in_col2 <- combined_df$EVT_NAME_20[!combined_df$EVT_NAME_20 %in% combined_df$EVT_NAME]
+
+print(non_matches_in_col1)  # Values in col1 that do not match col2
+print(non_matches_in_col2)  # Values in col2 that do not match col1
+```
+
+
 
